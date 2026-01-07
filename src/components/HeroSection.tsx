@@ -13,8 +13,27 @@ const HeroSection = () => {
     <section id="home" className="min-h-screen flex items-center justify-center px-4 pt-16">
       <div className="max-w-6xl mx-auto w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className="space-y-6">
+          {/* Avatar - Shows first on mobile, second on desktop */}
+          <div className="flex justify-center lg:justify-end opacity-0 animate-fade-in-right lg:order-2" style={{ animationDelay: "0.4s" }}>
+            <div className="relative">
+              {/* Decorative dashed border */}
+              <div className="absolute inset-0 rounded-full border-4 border-dashed border-primary/50 animate-swing" />
+
+              {/* Avatar container */}
+              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary flex items-center justify-center overflow-hidden border-4 border-primary/20">
+                <div className="text-6xl sm:text-8xl font-bold text-primary/30 font-mono">
+                  AP
+                </div>
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary rounded-full opacity-80 animate-pulse" />
+              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: "1s" }} />
+            </div>
+          </div>
+
+          {/* Text Content - Shows second on mobile, first on desktop */}
+          <div className="space-y-6 lg:order-1">
             <div className="space-y-2 opacity-0 animate-fade-in-left" style={{ animationDelay: "0.1s" }}>
               <p className="text-muted-foreground text-sm tracking-wider uppercase font-mono">
                 Software Engineer
@@ -64,25 +83,6 @@ const HeroSection = () => {
               >
                 Let's Talk
               </Button>
-            </div>
-          </div>
-
-          {/* Right Content - Avatar */}
-          <div className="flex justify-center lg:justify-end opacity-0 animate-fade-in-right" style={{ animationDelay: "0.4s" }}>
-            <div className="relative">
-              {/* Decorative dashed border */}
-              <div className="absolute inset-0 rounded-full border-4 border-dashed border-primary/50 animate-swing" />
-              
-              {/* Avatar container */}
-              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary flex items-center justify-center overflow-hidden border-4 border-primary/20">
-                <div className="text-6xl sm:text-8xl font-bold text-primary/30 font-mono">
-                  AP
-                </div>
-              </div>
-
-              {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary rounded-full opacity-80 animate-pulse" />
-              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: "1s" }} />
             </div>
           </div>
         </div>
