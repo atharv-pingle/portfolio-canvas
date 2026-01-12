@@ -21,6 +21,14 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add("mobile-menu-open");
+    } else {
+      document.body.classList.remove("mobile-menu-open");
+    }
+  }, [isMobileMenuOpen]);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -32,6 +40,7 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", id: "home" },
     { name: "Experience", id: "experience" },
+    { name: "Education", id: "education" },
     { name: "Skills", id: "skills" },
     { name: "Contact", id: "contact" },
   ];

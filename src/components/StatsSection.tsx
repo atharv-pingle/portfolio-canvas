@@ -10,7 +10,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="py-16 px-4" ref={ref}>
+    <section className="py-16 px-4 scroll-m-20" ref={ref}>
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {stats.map((stat, index) => (

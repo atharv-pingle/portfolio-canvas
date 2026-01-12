@@ -23,7 +23,7 @@ const SkillsSection = () => {
   ];
 
   return (
-    <section id="skills" className="py-20 px-4 bg-card/50" ref={ref}>
+    <section id="skills" className="py-20 px-4 bg-card/50 scroll-m-20" ref={ref}>
       <div className="max-w-6xl mx-auto">
         <div className={`text-center mb-12 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"}`}>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 font-mono">
