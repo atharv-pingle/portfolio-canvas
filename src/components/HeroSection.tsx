@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Mail, Linkedin, Github, Phone, Download } from "lucide-react";
+import TypingAnimation from "./ui/TypingAnimation";
 
 const HeroSection = () => {
   const socialLinks = [
@@ -20,8 +21,26 @@ const HeroSection = () => {
                 Software Engineer
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight font-mono">
-                  Hello I'm{" "}
-                  <span className="block text-primary">Atharv Pingle</span>
+                <TypingAnimation
+                  text="Hello I'm Atharv Pingle"
+                  render={(text, cursor) => {
+                    const preNameText = "Hello I'm ";
+                    const preNameLength = preNameText.length;
+
+                    const displayText = text;
+                    const helloPart = displayText.slice(0, preNameLength);
+                    const namePart = displayText.slice(preNameLength);
+
+                    return (
+                      <>
+                        {helloPart}
+                        {namePart && <br />}
+                        <span className="text-primary">{namePart}</span>
+                        {cursor}
+                      </>
+                    );
+                  }}
+                />
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
                 Cloud & Data Operations specialist with expertise in AWS, Python, and building
@@ -67,16 +86,33 @@ const HeroSection = () => {
           </div>
 
           {/* Right Content - Avatar */}
-          <div className="flex justify-center lg:justify-end opacity-0 animate-fade-in-right" style={{ animationDelay: "0.4s" }}>
+          <div className="order-first lg:order-last flex justify-center lg:justify-end opacity-0 animate-fade-in-right" style={{ animationDelay: "0.4s" }}>
             <div className="relative">
-              {/* Decorative dashed border */}
-              <div className="absolute inset-0 rounded-full border-4 border-dashed border-primary/50 animate-swing" />
               
+              {/* --- CHANGED: Used 'absolute -inset-4' to align exactly like your original code (but with a gap) --- */}
+              <svg 
+                className="absolute -inset-4 animate-swing text-primary" 
+                viewBox="0 0 100 100" 
+              >
+                <circle 
+                  cx="50" 
+                  cy="50" 
+                  r="48" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="1" 
+                  strokeDasharray="30 20" 
+                  strokeLinecap="round"
+                />
+              </svg>
+
               {/* Avatar container */}
-              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary flex items-center justify-center overflow-hidden border-4 border-primary/20">
-                <div className="text-6xl sm:text-8xl font-bold text-primary/30 font-mono">
-                  AP
-                </div>
+              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full flex items-center justify-center overflow-hidden relative z-10">
+                <img 
+                  src="/placeholder.png" 
+                  alt="Profile Picture" 
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* Decorative elements */}
