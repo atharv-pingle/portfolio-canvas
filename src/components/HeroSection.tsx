@@ -12,9 +12,9 @@ const HeroSection = () => {
   return (
     <section id="home" className="min-h-screen grid place-items-center px-4 pt-32 sm:pt-24 scroll-m-20">
       <div className="max-w-6xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-6 text-center lg:text-left">
+          <div className="space-y-6">
             <div className="space-y-2 opacity-0 animate-fade-in-left" style={{ animationDelay: "0.1s" }}>
               <p className="text-muted-foreground text-sm tracking-wider uppercase font-mono">
                 Software Engineer
@@ -67,33 +67,16 @@ const HeroSection = () => {
           </div>
 
           {/* Right Content - Avatar */}
-          <div className="order-first lg:order-last flex justify-center lg:justify-end opacity-0 animate-fade-in-right" style={{ animationDelay: "0.4s" }}>
+          <div className="flex justify-center lg:justify-end opacity-0 animate-fade-in-right" style={{ animationDelay: "0.4s" }}>
             <div className="relative">
+              {/* Decorative dashed border */}
+              <div className="absolute inset-0 rounded-full border-4 border-dashed border-primary/50 animate-swing" />
               
-              {/* --- CHANGED: Used 'absolute -inset-4' to align exactly like your original code (but with a gap) --- */}
-              <svg 
-                className="absolute -inset-4 animate-swing text-primary" 
-                viewBox="0 0 100 100" 
-              >
-                <circle 
-                  cx="50" 
-                  cy="50" 
-                  r="48" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="1" 
-                  strokeDasharray="30 20" 
-                  strokeLinecap="round"
-                />
-              </svg>
-
               {/* Avatar container */}
-              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary flex items-center justify-center overflow-hidden border-4 border-primary/20 relative z-10">
-                <img 
-                  src="/placeholder.png" 
-                  alt="Profile Picture" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary flex items-center justify-center overflow-hidden border-4 border-primary/20">
+                <div className="text-6xl sm:text-8xl font-bold text-primary/30 font-mono">
+                  AP
+                </div>
               </div>
 
               {/* Decorative elements */}
