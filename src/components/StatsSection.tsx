@@ -4,7 +4,7 @@ const StatsSection = () => {
   const { ref, isVisible } = useScrollAnimation();
   
   const stats = [
-    { value: "1+", label: "Years of Experience" },
+    { value: "3+", label: "Years of Experience" },
     { value: "10+", label: "Projects Completed" },
     { value: "15+", label: "Technologies Mastered" },
   ];

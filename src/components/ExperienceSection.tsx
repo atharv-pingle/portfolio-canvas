@@ -6,6 +6,18 @@ const ExperienceSection = () => {
   
   const experiences = [
     {
+      company: "Swiftsoft Infotech Services",
+      role: "DevOps Engineer",
+      period: "Sept 2023 – Present",
+      location: "Hyderabad, India (Remote)",
+      achievements: [
+        "Managed production Docker environments, implementing multi-stage builds that reduced container image sizes by 50% and improved security.",
+        "Architected and deployed scalable cloud environments using Terraform, ensuring environment parity and reducing manual provisioning time by 40%.",
+        "Configured Nginx reverse proxies and load balancers to manage traffic distribution, achieving 99.9% application uptime during peak loads.",
+        "Enforced IAM best practices and secret management protocols, achieving 100% compliance with internal security policies.",
+      ],
+    },
+    {
       company: "Skylex Technologies Pvt. Ltd.",
       role: "Software Engineer (Cloud & Data Operations)",
       period: "Oct 2022 – Sept 2023",

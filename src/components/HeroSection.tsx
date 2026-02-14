@@ -6,7 +6,7 @@ const HeroSection = () => {
   const socialLinks = [
     { icon: Mail, href: "mailto:atharvpingle@gmail.com", label: "Email" },
     { icon: Linkedin, href: "https://linkedin.com/in/atharv-pingle", label: "LinkedIn" },
-    { icon: Github, href: "https://github.com/atharvpingle", label: "GitHub" },
+    { icon: Github, href: "https://github.com/atharv-pingle", label: "GitHub" },
     { icon: Phone, href: "tel:+918007035660", label: "Phone" },
   ];
 
