@@ -18,7 +18,7 @@ const HeroSection = () => {
           <div className="space-y-6">
             <div className="space-y-2 opacity-0 animate-fade-in-left" style={{ animationDelay: "0.1s" }}>
               <p className="text-muted-foreground text-sm tracking-wider uppercase font-mono">
-                Software Engineer
+                DevOps Engineer
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight font-mono">
                 <TypingAnimation
@@ -43,8 +43,9 @@ const HeroSection = () => {
                 />
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
-                Cloud & Data Operations specialist with expertise in AWS, Python, and building
-                scalable data pipelines. Passionate about automation and infrastructure optimization.
+                Bridging the gap from data to deployment. 
+                I build resilient Cloud infrastructure and automated pipelines that empower engineers to scale reliably. 
+                Passionate about everything-as-code and peak optimization.
               </p>
             </div>
 
