@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { triggerHaptic } from "@/lib/haptics";
 import { Mail, Linkedin, Github, Phone, Download } from "lucide-react";
 import TypingAnimation from "./ui/TypingAnimation";
 
@@ -57,6 +58,7 @@ const HeroSection = () => {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => triggerHaptic()}
                   className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:scale-110 transition-all duration-300"
                   aria-label={link.label}
                 >
@@ -71,14 +73,21 @@ const HeroSection = () => {
                 asChild
                 className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300"
               >
-                <a href="/Atharv_Pingle_Resume.pdf" download>
+                <a
+                  href="/Atharv_Pingle_Resume.pdf"
+                  download
+                  onClick={() => triggerHaptic("success")}
+                >
                   <Download size={18} className="mr-2" />
                   Download CV
                 </a>
               </Button>
               <Button
                 variant="outline"
-                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() => {
+                  triggerHaptic();
+                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                }}
                 className="border-border text-foreground hover:border-primary hover:text-black hover:scale-105 transition-all duration-300"
               >
                 Let's Talk
