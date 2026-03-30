@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { triggerHaptic } from "@/lib/haptics";
+import { triggerHaptic, scrollElementIntoViewWithHaptics } from "@/lib/haptics";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -31,10 +31,9 @@ const Navbar = () => {
   }, [isMobileMenuOpen]);
 
   const scrollToSection = (id: string) => {
-    triggerHaptic();
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      scrollElementIntoViewWithHaptics(element);
     }
     setIsMobileMenuOpen(false);
   };

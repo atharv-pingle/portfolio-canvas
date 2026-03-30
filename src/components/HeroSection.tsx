@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { triggerHaptic } from "@/lib/haptics";
+import { triggerHaptic, scrollElementIntoViewWithHaptics } from "@/lib/haptics";
 import { Mail, Linkedin, Github, Phone, Download } from "lucide-react";
 import TypingAnimation from "./ui/TypingAnimation";
 import { useState } from "react";
@@ -195,8 +195,12 @@ const HeroSection = () => {
               <Button
                 variant="outline"
                 onClick={() => {
-                  triggerHaptic();
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                  const contactSection = document.getElementById("contact");
+                  if (contactSection) {
+                    scrollElementIntoViewWithHaptics(contactSection);
+                  } else {
+                    triggerHaptic();
+                  }
                 }}
                 className="border-border text-foreground hover:border-primary hover:text-black hover:scale-105 transition-all duration-300"
               >
