@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { triggerHaptic, scrollElementIntoViewWithHaptics } from "@/lib/haptics";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 
 const Navbar = () => {
+  const MOBILE_MENU_COLLAPSE_MS = 320;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const pendingScrollTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -30,12 +32,36 @@ const Navbar = () => {
     }
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    return () => {
+      if (pendingScrollTimeoutRef.current !== null) {
+        window.clearTimeout(pendingScrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
-    if (element) {
-      scrollElementIntoViewWithHaptics(element);
+    if (!element) {
+      setIsMobileMenuOpen(false);
+      return;
     }
-    setIsMobileMenuOpen(false);
+
+    if (pendingScrollTimeoutRef.current !== null) {
+      window.clearTimeout(pendingScrollTimeoutRef.current);
+      pendingScrollTimeoutRef.current = null;
+    }
+
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+      pendingScrollTimeoutRef.current = window.setTimeout(() => {
+        scrollElementIntoViewWithHaptics(element);
+        pendingScrollTimeoutRef.current = null;
+      }, MOBILE_MENU_COLLAPSE_MS);
+      return;
+    }
+
+    scrollElementIntoViewWithHaptics(element);
   };
 
   const navLinks = [

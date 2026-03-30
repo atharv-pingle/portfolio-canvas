@@ -140,6 +140,7 @@ const HeroSection = () => {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight font-mono">
                 <TypingAnimation
                   text="Hello I'm Atharv Pingle"
+                  enableHaptics
                   render={(text, cursor) => {
                     const preNameText = "Hello I'm ";
                     const preNameLength = preNameText.length;
