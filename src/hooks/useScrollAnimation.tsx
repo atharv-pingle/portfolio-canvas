@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { triggerHaptic } from "@/lib/haptics";
 
 export const useScrollAnimation = (threshold = 0.1) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -9,6 +10,7 @@ export const useScrollAnimation = (threshold = 0.1) => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          triggerHaptic("soft"); 
           observer.unobserve(entry.target);
         }
       },
@@ -19,7 +21,11 @@ export const useScrollAnimation = (threshold = 0.1) => {
       observer.observe(ref.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
   }, [threshold]);
 
   return { ref, isVisible };
