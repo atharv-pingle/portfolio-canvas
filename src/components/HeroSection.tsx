@@ -17,8 +17,9 @@ import {
 const RESUME_DRIVE_FILE_ID = "1r7yWc6GW73xnFZmZinWMVpTkYGYJodoY";
 const RESUME_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${RESUME_DRIVE_FILE_ID}`;
 const RESUME_LEADS_STORAGE_KEY = "resume_download_leads";
+const DEFAULT_RESUME_LEAD_ENDPOINT = "https://formspree.io/f/mojpderl";
 const RESUME_LEAD_WEBHOOK_URL = import.meta.env.VITE_RESUME_LEAD_WEBHOOK_URL;
-const RESUME_LEAD_ENDPOINT = RESUME_LEAD_WEBHOOK_URL || "/api/resume-leads";
+const RESUME_LEAD_ENDPOINT = RESUME_LEAD_WEBHOOK_URL || DEFAULT_RESUME_LEAD_ENDPOINT;
 
 type ResumeLead = {
   name: string;
@@ -60,7 +61,10 @@ const HeroSection = () => {
 
     const response = await fetch(RESUME_LEAD_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify(lead),
     });
 
@@ -74,10 +78,6 @@ const HeroSection = () => {
     const existingLeads = parseStoredLeads();
     const hasExistingLead = existingLeads.length > 0;
     if (hasExistingLead) {
-      const lastLead = existingLeads[existingLeads.length - 1];
-      if (lastLead) {
-        persistLead(lastLead).catch(() => undefined);
-      }
       triggerResumeDownload();
       return;
     }
