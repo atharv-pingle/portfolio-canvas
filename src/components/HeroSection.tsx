@@ -53,11 +53,7 @@ const HeroSection = () => {
 
   const persistLead = async (lead: ResumeLead) => {
     const existingLeads = parseStoredLeads();
-    const duplicateEmail = existingLeads.some((existingLead) => existingLead.email === lead.email);
-
-    if (!duplicateEmail) {
-      localStorage.setItem(RESUME_LEADS_STORAGE_KEY, JSON.stringify([...existingLeads, lead]));
-    }
+    localStorage.setItem(RESUME_LEADS_STORAGE_KEY, JSON.stringify([...existingLeads, lead]));
 
     const response = await fetch(RESUME_LEAD_ENDPOINT, {
       method: "POST",
@@ -75,12 +71,8 @@ const HeroSection = () => {
 
   const handleResumeButtonClick = () => {
     triggerHaptic("success");
-    const existingLeads = parseStoredLeads();
-    const hasExistingLead = existingLeads.length > 0;
-    if (hasExistingLead) {
-      triggerResumeDownload();
-      return;
-    }
+    setName("");
+    setEmail("");
     setIsDownloadDialogOpen(true);
   };
 
