@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 
 const RESUME_DRIVE_FILE_ID = "1r7yWc6GW73xnFZmZinWMVpTkYGYJodoY";
-const RESUME_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${RESUME_DRIVE_FILE_ID}view`;
+const RESUME_VIEW_URL = `https://drive.google.com/file/d/${RESUME_DRIVE_FILE_ID}/view`;
 const RESUME_LEADS_STORAGE_KEY = "resume_download_leads";
 const DEFAULT_RESUME_LEAD_ENDPOINT = "https://formspree.io/f/mojpderl";
 const RESUME_LEAD_WEBHOOK_URL = import.meta.env.VITE_RESUME_LEAD_WEBHOOK_URL;
@@ -48,7 +48,7 @@ const HeroSection = () => {
   };
 
   const triggerResumeDownload = () => {
-    window.open(RESUME_DOWNLOAD_URL, "_blank", "noopener,noreferrer");
+    window.open(RESUME_VIEW_URL, "_blank", "noopener,noreferrer");
   };
 
   const persistLead = async (lead: ResumeLead) => {
