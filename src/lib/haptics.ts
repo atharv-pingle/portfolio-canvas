@@ -1,4 +1,4 @@
-import { WebHaptics, defaultPatterns } from "web-haptics";
+import { WebHaptics, defaultPatterns, type HapticInput } from "web-haptics";
 
 type HapticVariant = "default" | "success" | "selection" | "soft" | "typing" | "typingComplete";
 
@@ -60,6 +60,19 @@ export const triggerHaptic = (variant: HapticVariant = "default") => {
       return;
     }
     instance.trigger();
+  } catch {
+    // Ignore unsupported browsers/devices.
+  }
+};
+
+export const triggerHapticInput = (input: HapticInput) => {
+  const instance = getHaptics();
+  if (!instance) {
+    return;
+  }
+
+  try {
+    instance.trigger(input);
   } catch {
     // Ignore unsupported browsers/devices.
   }

@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useState, useEffect, useRef, useCallback, ReactNode } from 'react';
 import { cn } from "@/lib/utils";
-import { triggerHaptic } from "@/lib/haptics";
+import { triggerHaptic, triggerHapticInput } from "@/lib/haptics";
 
 interface TypingAnimationProps {
   text: string;
@@ -26,6 +26,55 @@ const TypingAnimation = ({
   const [showCursor, setShowCursor] = useState(true);
   const lastTypingHapticAtRef = useRef(0);
   const completionHapticPlayedRef = useRef(false);
+  const typingSequenceQueuedRef = useRef(false);
+  const currentIndexRef = useRef(0);
+  const isCompleteRef = useRef(false);
+
+  const buildTypingPatternFromIndex = useCallback((startIndex: number) => {
+    const keypressDurationMs = 18;
+    const minimumGapMs = 12;
+    const completionPauseMs = 50;
+    const pattern: number[] = [];
+    let accumulatedDelay = 0;
+
+    for (let index = startIndex; index < text.length; index += 1) {
+      accumulatedDelay += speed;
+      const nextCharacter = text[index];
+
+      if (nextCharacter.trim().length === 0) {
+        continue;
+      }
+
+      const onDuration = Math.min(keypressDurationMs, Math.max(8, accumulatedDelay));
+      pattern.push(onDuration);
+
+      const offDuration = Math.max(minimumGapMs, accumulatedDelay - onDuration);
+      pattern.push(offDuration);
+      accumulatedDelay = 0;
+    }
+
+    if (pattern.length === 0) {
+      return pattern;
+    }
+
+    pattern[pattern.length - 1] = Math.max(pattern[pattern.length - 1], completionPauseMs);
+    pattern.push(24, 45, 34);
+    return pattern;
+  }, [speed, text]);
+
+  const scheduleRemainingTypingPattern = useCallback(() => {
+    if (!enableHaptics || typingSequenceQueuedRef.current || isCompleteRef.current) {
+      return;
+    }
+
+    const pattern = buildTypingPatternFromIndex(currentIndexRef.current);
+    if (pattern.length === 0) {
+      return;
+    }
+
+    triggerHapticInput(pattern);
+    typingSequenceQueuedRef.current = true;
+  }, [buildTypingPatternFromIndex, enableHaptics]);
 
   useEffect(() => {
     if (currentIndex < text.length) {
@@ -34,7 +83,7 @@ const TypingAnimation = ({
         setDisplayText((prevText) => prevText + nextCharacter);
         setCurrentIndex((prevIndex) => prevIndex + 1);
 
-        if (enableHaptics && nextCharacter.trim().length > 0) {
+        if (enableHaptics && !typingSequenceQueuedRef.current && nextCharacter.trim().length > 0) {
           const now = performance.now();
           if (now - lastTypingHapticAtRef.current >= typingHapticThrottleMs) {
             triggerHaptic("typing");
@@ -48,7 +97,12 @@ const TypingAnimation = ({
   }, [currentIndex, enableHaptics, speed, text, typingHapticThrottleMs]);
 
   useEffect(() => {
-    if (!enableHaptics || displayText !== text || completionHapticPlayedRef.current) {
+    if (
+      !enableHaptics ||
+      typingSequenceQueuedRef.current ||
+      displayText !== text ||
+      completionHapticPlayedRef.current
+    ) {
       return;
     }
     triggerHaptic("typingComplete");
@@ -56,8 +110,36 @@ const TypingAnimation = ({
   }, [displayText, enableHaptics, text]);
 
   useEffect(() => {
+    currentIndexRef.current = currentIndex;
+    isCompleteRef.current = displayText === text;
+  }, [currentIndex, displayText, text]);
+
+  useEffect(() => {
+    if (!enableHaptics) {
+      return;
+    }
+
+    const handleUserGesture = () => {
+      scheduleRemainingTypingPattern();
+    };
+
+    window.addEventListener("pointerdown", handleUserGesture, { passive: true });
+    window.addEventListener("touchstart", handleUserGesture, { passive: true });
+    window.addEventListener("keydown", handleUserGesture);
+
+    return () => {
+      window.removeEventListener("pointerdown", handleUserGesture);
+      window.removeEventListener("touchstart", handleUserGesture);
+      window.removeEventListener("keydown", handleUserGesture);
+    };
+  }, [enableHaptics, scheduleRemainingTypingPattern]);
+
+  useEffect(() => {
     completionHapticPlayedRef.current = false;
     lastTypingHapticAtRef.current = 0;
+    typingSequenceQueuedRef.current = false;
+    currentIndexRef.current = 0;
+    isCompleteRef.current = false;
   }, [text, enableHaptics]);
 
   useEffect(() => {
