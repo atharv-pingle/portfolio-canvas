@@ -5,6 +5,7 @@ import TypingAnimation from "./ui/TypingAnimation";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ type ResumeLead = {
 };
 
 const HeroSection = () => {
+  const isMobile = useIsMobile();
   const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -141,7 +143,7 @@ const HeroSection = () => {
                 <TypingAnimation
                   text="Hello I'm Atharv Pingle"
                   enableHaptics
-                  waitForUserInteractionToStart
+                  waitForUserInteractionToStart={isMobile}
                   render={(text, cursor) => {
                     const preNameText = "Hello I'm ";
                     const preNameLength = preNameText.length;
