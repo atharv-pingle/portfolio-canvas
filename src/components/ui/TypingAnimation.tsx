@@ -10,6 +10,7 @@ interface TypingAnimationProps {
   render?: (text: string, cursor: ReactNode) => ReactNode;
   enableHaptics?: boolean;
   typingHapticThrottleMs?: number;
+  waitForUserInteractionToStart?: boolean;
 }
 
 const TypingAnimation = ({
@@ -20,10 +21,12 @@ const TypingAnimation = ({
   render,
   enableHaptics = false,
   typingHapticThrottleMs = 80,
+  waitForUserInteractionToStart = false,
 }: TypingAnimationProps) => {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
+  const [canStartTyping, setCanStartTyping] = useState(!enableHaptics || !waitForUserInteractionToStart);
   const lastTypingHapticAtRef = useRef(0);
   const completionHapticPlayedRef = useRef(false);
   const typingSequenceQueuedRef = useRef(false);
@@ -77,6 +80,10 @@ const TypingAnimation = ({
   }, [buildTypingPatternFromIndex, enableHaptics]);
 
   useEffect(() => {
+    if (!canStartTyping) {
+      return;
+    }
+
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
         const nextCharacter = text[currentIndex];
@@ -94,7 +101,7 @@ const TypingAnimation = ({
 
       return () => clearTimeout(timeout);
     }
-  }, [currentIndex, enableHaptics, speed, text, typingHapticThrottleMs]);
+  }, [canStartTyping, currentIndex, enableHaptics, speed, text, typingHapticThrottleMs]);
 
   useEffect(() => {
     if (
@@ -120,19 +127,26 @@ const TypingAnimation = ({
     }
 
     const handleUserGesture = () => {
+      if (waitForUserInteractionToStart) {
+        setCanStartTyping(true);
+      }
       scheduleRemainingTypingPattern();
     };
 
-    window.addEventListener("pointerdown", handleUserGesture, { passive: true });
-    window.addEventListener("touchstart", handleUserGesture, { passive: true });
+    window.addEventListener("click", handleUserGesture, { passive: true });
+    window.addEventListener("touchend", handleUserGesture, { passive: true });
     window.addEventListener("keydown", handleUserGesture);
 
     return () => {
-      window.removeEventListener("pointerdown", handleUserGesture);
-      window.removeEventListener("touchstart", handleUserGesture);
+      window.removeEventListener("click", handleUserGesture);
+      window.removeEventListener("touchend", handleUserGesture);
       window.removeEventListener("keydown", handleUserGesture);
     };
-  }, [enableHaptics, scheduleRemainingTypingPattern]);
+  }, [enableHaptics, scheduleRemainingTypingPattern, waitForUserInteractionToStart]);
+
+  useEffect(() => {
+    setCanStartTyping(!enableHaptics || !waitForUserInteractionToStart);
+  }, [enableHaptics, waitForUserInteractionToStart]);
 
   useEffect(() => {
     completionHapticPlayedRef.current = false;

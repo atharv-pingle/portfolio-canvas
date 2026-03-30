@@ -141,6 +141,7 @@ const HeroSection = () => {
                 <TypingAnimation
                   text="Hello I'm Atharv Pingle"
                   enableHaptics
+                  waitForUserInteractionToStart
                   render={(text, cursor) => {
                     const preNameText = "Hello I'm ";
                     const preNameLength = preNameText.length;
