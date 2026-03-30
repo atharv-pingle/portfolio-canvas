@@ -19,7 +19,7 @@ const TypingAnimation = ({
   cursorClassName,
   render,
   enableHaptics = false,
-  typingHapticThrottleMs = 100,
+  typingHapticThrottleMs = 80,
 }: TypingAnimationProps) => {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -37,7 +37,7 @@ const TypingAnimation = ({
         if (enableHaptics && nextCharacter.trim().length > 0) {
           const now = performance.now();
           if (now - lastTypingHapticAtRef.current >= typingHapticThrottleMs) {
-            triggerHaptic("selection");
+            triggerHaptic("typing");
             lastTypingHapticAtRef.current = now;
           }
         }
@@ -51,7 +51,7 @@ const TypingAnimation = ({
     if (!enableHaptics || displayText !== text || completionHapticPlayedRef.current) {
       return;
     }
-    triggerHaptic("soft");
+    triggerHaptic("typingComplete");
     completionHapticPlayedRef.current = true;
   }, [displayText, enableHaptics, text]);
 

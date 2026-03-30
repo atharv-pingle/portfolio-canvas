@@ -1,6 +1,6 @@
 import { WebHaptics, defaultPatterns } from "web-haptics";
 
-type HapticVariant = "default" | "success" | "selection" | "soft";
+type HapticVariant = "default" | "success" | "selection" | "soft" | "typing" | "typingComplete";
 
 type ScrollFeedbackOptions = {
   minDistance?: number;
@@ -41,6 +41,22 @@ export const triggerHaptic = (variant: HapticVariant = "default") => {
     }
     if (variant === "soft") {
       instance.trigger(defaultPatterns.soft);
+      return;
+    }
+    if (variant === "typing") {
+      // Slightly stronger than "selection" so it remains noticeable on mobile motors.
+      instance.trigger({
+        pattern: [{ duration: 18, intensity: 0.85 }],
+      });
+      return;
+    }
+    if (variant === "typingComplete") {
+      instance.trigger({
+        pattern: [
+          { duration: 24, intensity: 0.7 },
+          { delay: 45, duration: 34, intensity: 1 },
+        ],
+      });
       return;
     }
     instance.trigger();
