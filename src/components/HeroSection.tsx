@@ -2,8 +2,124 @@ import { Button } from "@/components/ui/button";
 import { triggerHaptic } from "@/lib/haptics";
 import { Mail, Linkedin, Github, Phone, Download } from "lucide-react";
 import TypingAnimation from "./ui/TypingAnimation";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+const RESUME_DRIVE_FILE_ID = "1r7yWc6GW73xnFZmZinWMVpTkYGYJodoY";
+const RESUME_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${RESUME_DRIVE_FILE_ID}`;
+const RESUME_LEADS_STORAGE_KEY = "resume_download_leads";
+const RESUME_LEAD_WEBHOOK_URL = import.meta.env.VITE_RESUME_LEAD_WEBHOOK_URL;
+
+type ResumeLead = {
+  name: string;
+  email: string;
+  createdAt: string;
+};
 
 const HeroSection = () => {
+  const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const parseStoredLeads = () => {
+    try {
+      const rawLeads = localStorage.getItem(RESUME_LEADS_STORAGE_KEY);
+      if (!rawLeads) return [] as ResumeLead[];
+      const parsedLeads = JSON.parse(rawLeads);
+      return Array.isArray(parsedLeads) ? (parsedLeads as ResumeLead[]) : [];
+    } catch {
+      return [] as ResumeLead[];
+    }
+  };
+
+  const isValidEmail = (value: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  };
+
+  const triggerResumeDownload = () => {
+    window.open(RESUME_DOWNLOAD_URL, "_blank", "noopener,noreferrer");
+  };
+
+  const persistLead = async (lead: ResumeLead) => {
+    const existingLeads = parseStoredLeads();
+    const duplicateEmail = existingLeads.some((existingLead) => existingLead.email === lead.email);
+
+    if (!duplicateEmail) {
+      localStorage.setItem(RESUME_LEADS_STORAGE_KEY, JSON.stringify([...existingLeads, lead]));
+    }
+
+    if (RESUME_LEAD_WEBHOOK_URL) {
+      await fetch(RESUME_LEAD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lead),
+      });
+    }
+  };
+
+  const handleResumeButtonClick = () => {
+    triggerHaptic("success");
+    const hasExistingLead = parseStoredLeads().length > 0;
+    if (hasExistingLead) {
+      triggerResumeDownload();
+      return;
+    }
+    setIsDownloadDialogOpen(true);
+  };
+
+  const handleResumeFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+
+    if (!trimmedName) {
+      toast({
+        title: "Name required",
+        description: "Please add your name before downloading.",
+      });
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      toast({
+        title: "Valid email required",
+        description: "Please enter a valid email address.",
+      });
+      return;
+    }
+
+    try {
+      await persistLead({
+        name: trimmedName,
+        email: trimmedEmail,
+        createdAt: new Date().toISOString(),
+      });
+    } catch {
+      toast({
+        title: "Could not save details",
+        description: "Your resume will still open, but lead capture failed.",
+      });
+    }
+
+    setIsDownloadDialogOpen(false);
+    triggerResumeDownload();
+
+    toast({
+      title: "Download started",
+      description: "Thanks. Your details were saved and the resume is opening now.",
+    });
+  };
+
   const socialLinks = [
     { icon: Mail, href: "mailto:atharvpingle@gmail.com", label: "Email" },
     { icon: Linkedin, href: "https://linkedin.com/in/atharv-pingle", label: "LinkedIn" },
@@ -70,17 +186,11 @@ const HeroSection = () => {
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start opacity-0 animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
               <Button
-                asChild
+                onClick={handleResumeButtonClick}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300"
               >
-                <a
-                  href="/Atharv_Pingle_Resume.pdf"
-                  download
-                  onClick={() => triggerHaptic("success")}
-                >
-                  <Download size={18} className="mr-2" />
-                  Download CV
-                </a>
+                <Download size={18} className="mr-2" />
+                Download CV
               </Button>
               <Button
                 variant="outline"
@@ -132,6 +242,54 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={isDownloadDialogOpen} onOpenChange={setIsDownloadDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Download Resume</DialogTitle>
+            <DialogDescription>
+              Please add your name and email to continue.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleResumeFormSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="resume-user-name" className="text-sm text-muted-foreground">
+                Name
+              </label>
+              <Input
+                id="resume-user-name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Your name"
+                autoComplete="name"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="resume-user-email" className="text-sm text-muted-foreground">
+                Email
+              </label>
+              <Input
+                id="resume-user-email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+                type="email"
+                autoComplete="email"
+                required
+              />
+            </div>
+
+            <DialogFooter>
+              <Button type="submit" className="w-full sm:w-auto">
+                Save and Download
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
